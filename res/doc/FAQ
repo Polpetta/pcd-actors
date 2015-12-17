@@ -1,0 +1,62 @@
+Domande effettuate durante lezione:
+1) D: ci sono 4 interfacce di cui due hanno classi astratte. Cosa devo fare?
+
+2) D: dobbiamo implementare con classi concrete o astratte?
+
+3) D: poichè sono presenti delle strutture sincronizzate, Actor e ActorSystem sono da considerarsi dei thread?
+R: Solitamente la struttura dati non è un thread, e le strutture sincronizzate sono strutture passive che vengono usate.
+
+4) D: ActorSystem è un Singleton?
+R: Ni. Non è un Singleton con la S maiuscola, ma con la s minuscola. Non ha la struttura del singleton che abbiamo visto
+a SWE. È sicuramente una classe che deve essere istanziata una volta sola, altrimenti avrei più gruppi di attori che
+non sarebbero in grado di parlare tra loro. Sta a chi produce il framework (noi) che si occupi che arrivi sempre il
+solito ActorSystem, quindi dev'essere creato nel main. L'unico modo per farlo è effettivamente farlo un Singleton
+(con la S maiuscola)
+
+5) D: Dobbiamo dare la possibilità agli utilizzatore della libreria di estendere ActorSystem?
+R: No perchè è troppo importante per essere estesa da gente esterna alla libreria
+
+6) D: ActorRef come interagisce con il resto del sistema? C'è differenza nella comunicazione di tipo locale/remoto?
+R: ActorReference è un puntatore nel senso che mi permette di interloquire con un attore, senza averne l'implementazione
+"in pancia", abbiamo disaccoppiato l'implementazione dell'attore con l'abilità di interagire. Tramite ActorRef dovrei
+riuscire a gestire l'interscambio d'informazione con i server remoti con chi mi sta utilizzando.
+Il framework deve gestire sia gli attori sia la sincronizzazione online, e quindi l'utilizzatore della nostra libreria
+non avrà mai a che fare con Actor direttamente (deve chiedere ad ActorSystem di ritornargli un ActorRef)
+
+Il metodo ActorOf è un metodo factory, si occupa di creare un attore, ma ritorno comunque un ActorRef, che è come andrò
+a chiamare quell'istanza di attore. L'actorSystem ha una mappa che associa un reference a una particolare istanza di
+attore. Quindi per interagire un utente dovrà passare per la libreria che passerà nell'actorSystem, che recupererà
+effettivamente l'istanza dell'attore e a quel punto verrà effettivamente passato il messaggio. L'actorRef mi serve per
+dialogare con l'attore indirettamente.
+
+7) D: La divisione logica fornita del messaggio implica una uguale divisione fisica?
+R: Chi usa la libreria si occuperà di estendere il messaggio.
+I test non verranno intaccati. Il tag in questa implementazione è il tipo di messaggio. Son presenti il payload che non
+sono informazioni che interessano alla libreria, è chiaro che le informazioni che vengono trasportate alla libreria
+sono a carico di chi l'implementa. Il ricevitore quando si chiama send lo si chiama su se stessi.
+
+
+-- Il sender oltre a essere protetto (AbsActor) viene continuamente impostato
+
+8) D: come faccio avere il riferimento al sender all'attore
+
+9) D: I metodi che un itulizzatore della libreria può usare sono solo quelli definiti inizialmente dal progetto
+
+10) D: perchè devo inviare solo Message?perchè devo inviare solo Message?
+
+11) D: Se AbsActorSystem è astratta come fanno i test ad utilizzarla?
+
+12) D: Il metodo receive della classe actor va implementato? No. Il metodo receive è il punto dove il framework viene
+istanziato
+
+13) D: Perchè non utilizziamo delle stringhe per invocare dei metodi tramite Reflection
+
+14) D: Gli attori locali/remoti hanno privilegi diversi?
+
+15) D: Come faccio a capire quando eseguire il prossimo messaggio?
+R: sta squisitamente nell'implementazione dell'attore che avrà forzatamente un ciclo tanto che l'actorSystem può
+essere richiesto di stoppare l'attore.
+
+
+Consigli: si giocherà spesso sul fatto che protected è un po' truffaldina, di questa ne va fatta buon uso
+- L'attore esegue solamente in base al messaggio. Il messaggio non contiene alcun "codice" o roba da eseguire
