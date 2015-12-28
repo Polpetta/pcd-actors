@@ -5,12 +5,12 @@ package it.unipd.math.pcd.actors;
  *
  * @author Polonio Davide
  */
-public class Packet {
+public class Packet<T extends Message> {
 
-  Message msg;
+  T msg;
   ActorRef<? extends Message> sender;
 
-  public Packet(Message msg, ActorRef<? extends Message> sender){
+  public Packet(T msg, ActorRef<? extends Message> sender){
 
     this.msg = msg;
     this.sender = sender;
@@ -23,7 +23,7 @@ public class Packet {
     return sender;
   }
 
-  public Message getMessage(){
+  public T getMessage(){
 
     return msg;
   }
@@ -35,7 +35,7 @@ public class Packet {
     sender = newActorRef;
   }
 
-  public void setMessage(Message newMessage){
+  public void setMessage(T newMessage){
 
     msg = newMessage;
   }
