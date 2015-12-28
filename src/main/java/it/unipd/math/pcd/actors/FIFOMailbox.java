@@ -9,6 +9,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class FIFOMailbox implements Mailbox {
 
+  /*
+  poll and put are synchronized methods, but there aren't between then
+   */
+
   /**
    *
    * Sincronized Queue
@@ -28,6 +32,11 @@ public class FIFOMailbox implements Mailbox {
   @Override
   public Packet pop(){
 
+    /*
+
+    Here is better poll o take? take() wait until there is a element in the
+    queue. poll() return null if no elements are in the queue
+     */
     //poll is a synchronize method
     return queue.poll();
   }
