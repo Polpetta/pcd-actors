@@ -37,8 +37,12 @@ public class FIFOMailbox implements Mailbox {
     Here is better poll o take? take() wait until there is a element in the
     queue. poll() return null if no elements are in the queue
      */
-    //poll is a synchronize method
-    return queue.poll();
+    try {//I'm sure i need a try 'n catch here? Can I throw the exception?
+      return queue.take();
+    }catch(InterruptedException e){
+
+      e.printStackTrace();
+    }
   }
 
   /**
