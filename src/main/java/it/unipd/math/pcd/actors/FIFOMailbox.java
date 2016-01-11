@@ -10,12 +10,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class FIFOMailbox implements Mailbox {
 
   /*
-  poll and put are synchronized methods, but there aren't between then
+  poll and put are synchronized methods, but there aren't between them
    */
 
   /**
    *
-   * Sincronized Queue
+   * Synchronized Queue
    */
   private LinkedBlockingQueue<Packet> queue;
 
