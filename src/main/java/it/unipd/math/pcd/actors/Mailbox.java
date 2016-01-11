@@ -5,7 +5,7 @@ package it.unipd.math.pcd.actors;
  *
  * @author Polonio Davide
  */
-public interface Mailbox extends Runnable {
+public interface Mailbox {
 
   Packet pop();
   void put(Packet newPacket);

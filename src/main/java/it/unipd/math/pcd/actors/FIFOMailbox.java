@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author Polonio Davide
  */
-public class FIFOMailbox extends Thread implements Mailbox {
+public class FIFOMailbox implements Mailbox {
 
   /*
   poll and put are synchronized methods, but there aren't between them
