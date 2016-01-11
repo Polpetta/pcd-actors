@@ -57,7 +57,35 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
     protected ActorRef<T> sender;
 
     /**
-     * Sets the self-referece.
+     * mailbox where messages will be send
+     */
+    protected Mailbox mailbox;
+
+    /**
+     * flag if I have to stop
+     */
+    protected boolean haveToStop;
+
+    public AbsActor() {
+
+        mailbox = new FIFOMailbox();
+        haveToStop = false;
+
+        //default null
+        self = null;
+        sender = null;
+
+    }
+
+
+    //setter
+    protected final void setSender(ActorRef<T> sender){
+
+        this.sender = sender;
+    }
+
+    /**
+     * Sets the self-reference.
      *
      * @param self The reference to itself
      * @return The actor.
@@ -66,4 +94,28 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         this.self = self;
         return this;
     }
+
+
+    //getter
+    protected final ActorRef<T> getSelf() {
+
+        return self;
+    }
+
+    protected final ActorRef<T> getSender() {
+
+        return sender;
+    }
+
+    public void stop(){
+
+        haveToStop = true;
+    }
+
+    //TODO: how i can start everything?
+    public void start(){
+
+        //...
+    }
+
 }
