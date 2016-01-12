@@ -46,6 +46,13 @@ package it.unipd.math.pcd.actors;
  */
 public abstract class AbsActor<T extends Message> implements Actor<T> {
 
+    private enum internalStatus{
+
+        initialized,
+        running,
+        stopped
+    }
+
     /**
      * Self-reference of the actor
      */
@@ -62,18 +69,18 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
     protected Mailbox mailbox;
 
     /**
-     * flag if I have to stop
+     * flag that inform me about the internal status of my actor
      */
-    protected boolean haveToStop;
+    private internalStatus status;
 
     public AbsActor() {
 
         mailbox = new FIFOMailbox();
-        haveToStop = false;
 
         //default null
         self = null;
         sender = null;
+        status = internalStatus.initialized;
 
     }
 
@@ -109,13 +116,43 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
     public void stop(){
 
-        haveToStop = true;
+        status = internalStatus.stopped;
     }
 
-    //TODO: how i can start everything?
-    public void start(){
+    public void clearMessages(){
 
-        //...
+        mailbox.clear();
+    }
+
+    public void putInMailbox(Packet newPacket){
+
+        synchronized (this){
+
+            if (status == internalStatus.initialized) {
+
+                start();
+                status = internalStatus.running;
+            }
+        }
+        mailbox.put(newPacket);
+    }
+
+    private void start(){
+
+        ((ImprovedActorRef<T>)self).sendTask(new Runnable() {
+            @Override
+            public void run() {
+                while (status == internalStatus.running ){
+
+                    Packet<T> toProcess = mailbox.pop();
+                    if (status == internalStatus.running ){
+
+                        setSender((ActorRef<T>)toProcess.getActorRef());
+                        receive(toProcess.getMessage());
+                    }
+                }
+            }
+        });
     }
 
 }
