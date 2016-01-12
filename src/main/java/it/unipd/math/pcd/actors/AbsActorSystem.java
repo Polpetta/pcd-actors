@@ -39,6 +39,7 @@ package it.unipd.math.pcd.actors;
 
 import it.unipd.math.pcd.actors.exceptions.NoSuchActorException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -80,4 +81,51 @@ public abstract class AbsActorSystem implements ActorSystem {
     }
 
     protected abstract ActorRef createActorReference(ActorMode mode);
+
+
+
+    AbsActorSystem() {
+
+        actors = new HashMap<>();
+    }
+
+    public Actor<?> search(ActorRef<?> toSearch) throws NoSuchActorException {
+
+        Actor founded = actors.get(toSearch);
+
+        if (founded == null){
+
+            //i have found nothing
+            throw new NoSuchActorException();
+        }
+
+        return founded;
+    }
+
+    @Override
+    public void stop(ActorRef<?> toStop){
+
+        stop((AbsActor)actors.get(toStop));
+    }
+
+    @Override
+    public void stop() {
+
+        for (Map.Entry<ActorRef<?>, Actor<?>> toStop : actors.entrySet()) {
+
+            stop(((AbsActor)toStop.getValue()));
+        }
+    }
+
+    private void stop(AbsActor actorToStop) {
+
+        synchronized (this){
+
+            //are this actions executed atomically?
+            actorToStop.clearMessages();
+            actorToStop.stop();
+            //TODO: send to actor a dummy message
+
+        }
+    }
 }
