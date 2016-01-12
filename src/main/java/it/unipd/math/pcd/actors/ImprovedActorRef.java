@@ -7,7 +7,7 @@ public abstract class ImprovedActorRef<T extends Message> implements ActorRef<T>
 
     protected AbsActorSystem absSystem;
 
-    ImprovedActorRef( AbsActorSystem newSystem ){
+    public ImprovedActorRef( AbsActorSystem newSystem ){
 
         absSystem = newSystem;
     }

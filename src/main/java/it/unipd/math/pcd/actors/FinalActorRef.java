@@ -5,7 +5,7 @@ package it.unipd.math.pcd.actors;
  */
 public final class FinalActorRef<T extends Message> extends ImprovedActorRef<T> {
 
-    FinalActorRef(AbsActorSystem absSystem){
+    public FinalActorRef(AbsActorSystem absSystem){
 
         super(absSystem);
     }
