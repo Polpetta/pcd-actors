@@ -84,7 +84,7 @@ public abstract class AbsActorSystem implements ActorSystem {
 
 
 
-    AbsActorSystem() {
+    public AbsActorSystem() {
 
         actors = new HashMap<>();
     }
@@ -124,8 +124,10 @@ public abstract class AbsActorSystem implements ActorSystem {
             //are this actions executed atomically?
             actorToStop.clearMessages();
             actorToStop.stop();
-            //TODO: send to actor a dummy message
-
+            actorToStop.putInMailbox(new Packet(new DummyMessage(), null)); //I'm sure null here?!
         }
     }
+
+    //dummy message
+    private class DummyMessage implements Message {}
 }
