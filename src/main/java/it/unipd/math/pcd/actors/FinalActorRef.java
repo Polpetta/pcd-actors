@@ -10,10 +10,14 @@ public final class FinalActorRef<T extends Message> extends ImprovedActorRef<T> 
         super(absSystem);
     }
 
-    //TODO: implement send
     @Override
     public void send(T message, ActorRef to){
 
-        //...
+
+        Packet<T> packetToSend = new Packet<>(message, this);
+
+        //send to the selected actor
+        AbsActor toSend = (AbsActor)absSystem.search(to);
+        toSend.putInMailbox(packetToSend);
     }
 }

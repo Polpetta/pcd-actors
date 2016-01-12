@@ -12,6 +12,11 @@ public abstract class ImprovedActorRef<T extends Message> implements ActorRef<T>
         absSystem = newSystem;
     }
 
+    public void sendTask(Runnable task){
+
+        ((ConcreteActorSystem)absSystem).add(task);
+    }
+
     @Override
     public int compareTo( ActorRef toCompare ) {
 
