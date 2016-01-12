@@ -10,7 +10,7 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     ExecutorService threadManager;
 
-    ConcreteActorSystem() {
+    public ConcreteActorSystem() {
 
         int aviableProcessors = Runtime.getRuntime().availableProcessors();
 
@@ -32,6 +32,6 @@ public class ConcreteActorSystem extends AbsActorSystem {
             //this cause I have only one ActorSystem
             return new FinalActorRef(this);
         } else
-            return null; //no distributed version
+            throw new IllegalArgumentException(); //no distributed version anymore
     }
 }
