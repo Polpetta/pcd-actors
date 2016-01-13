@@ -105,7 +105,21 @@ public abstract class AbsActorSystem implements ActorSystem {
     @Override
     public void stop(ActorRef<?> toStop){
 
+
         stop((AbsActor)actors.get(toStop));
+        actors.remove(toStop);
+        //Actor actorToStop = actors.get(toStop);
+
+        /*if (actorToStop != null) {
+
+            stop((AbsActor)actors.get(toStop));
+            //remove actor from the map
+            //Need a Join for waiting the finiscing job actor?
+            actors.remove(toStop);
+        } else
+            throw new NoSuchActorException(); */
+
+
     }
 
     @Override
@@ -114,10 +128,16 @@ public abstract class AbsActorSystem implements ActorSystem {
         for (Map.Entry<ActorRef<?>, Actor<?>> toStop : actors.entrySet()) {
 
             stop(((AbsActor)toStop.getValue()));
+            actors.remove(toStop);
         }
     }
 
     private void stop(AbsActor actorToStop) {
+
+        if (actorToStop == null){
+
+            throw new NoSuchActorException();
+        }
 
         synchronized (this){
 
