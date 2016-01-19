@@ -139,6 +139,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
     private void start(){
 
+        //use callable, but what have I to return?
         ((ImprovedActorRef<T>)self).sendTask(new Runnable() {
             @Override
             public void run() {
