@@ -39,7 +39,9 @@ package it.unipd.math.pcd.actors;
 
 import it.unipd.math.pcd.actors.exceptions.NoSuchActorException;
 import it.unipd.math.pcd.actors.utils.ActorSystemFactory;
+import it.unipd.math.pcd.actors.utils.actors.LongJobActor;
 import it.unipd.math.pcd.actors.utils.actors.TrivialActor;
+import it.unipd.math.pcd.actors.utils.messages.DummyMessage;
 import it.unipd.math.pcd.actors.utils.messages.TrivialMessage;
 import org.junit.Assert;
 import org.junit.Before;
@@ -104,5 +106,29 @@ public class ActorSystemTest {
         ActorRef ref1 = system.actorOf(TrivialActor.class);
         system.stop(ref1);
         system.stop(ref1);
+    }
+
+    @Test
+    public void shouldWaitAllThreadFinish() {
+
+        final long TIME_TO_SLEEP = 5000;
+
+        ActorRef ref1 = system.actorOf(LongJobActor.class);
+
+        ref1.send(new DummyMessage(), ref1);
+
+        try {
+            Thread.sleep(TIME_TO_SLEEP);
+        }catch (InterruptedException e){
+
+            e.printStackTrace();
+        }
+
+        system.stop();
+
+
+
+        //attendo 5 secondi?
+        //ORA?
     }
 }
