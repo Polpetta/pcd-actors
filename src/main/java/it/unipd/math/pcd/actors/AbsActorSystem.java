@@ -41,6 +41,7 @@ import it.unipd.math.pcd.actors.exceptions.NoSuchActorException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A map-based implementation of the actor system.
@@ -86,7 +87,7 @@ public abstract class AbsActorSystem implements ActorSystem {
 
     public AbsActorSystem() {
 
-        actors = new HashMap<>();
+        actors = new ConcurrentHashMap<>();
     }
 
     public Actor<?> search(ActorRef<?> toSearch) throws NoSuchActorException {
@@ -102,52 +103,8 @@ public abstract class AbsActorSystem implements ActorSystem {
         return founded;
     }
 
-    @Override
-    public void stop(ActorRef<?> toStop){
+    protected Map<ActorRef<?>, Actor<?>> getMap(){
 
-
-        stop((AbsActor)actors.get(toStop));
-        actors.remove(toStop);
-        //Actor actorToStop = actors.get(toStop);
-
-        /*if (actorToStop != null) {
-
-            stop((AbsActor)actors.get(toStop));
-            //remove actor from the map
-            //Need a Join for waiting the finiscing job actor?
-            actors.remove(toStop);
-        } else
-            throw new NoSuchActorException(); */
-
-
+        return actors;
     }
-
-    @Override
-    public void stop() {
-
-        for (Map.Entry<ActorRef<?>, Actor<?>> toStop : actors.entrySet()) {
-
-            stop(((AbsActor)toStop.getValue()));
-            actors.remove(toStop);
-        }
-    }
-
-    private void stop(AbsActor actorToStop) {
-
-        if (actorToStop == null){
-
-            throw new NoSuchActorException();
-        }
-
-        synchronized (this){
-
-            //are this actions executed atomically?
-            actorToStop.clearMessages();
-            actorToStop.stop();
-            actorToStop.putInMailbox(new Packet(new DummyMessage(), null)); //I'm sure null here?!
-        }
-    }
-
-    //dummy message
-    private class DummyMessage implements Message {}
 }
