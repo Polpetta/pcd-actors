@@ -1,5 +1,7 @@
 package it.unipd.math.pcd.actors;
 
+import java.util.concurrent.Callable;
+
 /**
  * Created by davide on 11/01/16.
  */
@@ -12,7 +14,7 @@ public abstract class ImprovedActorRef<T extends Message> implements ActorRef<T>
         absSystem = newSystem;
     }
 
-    public void sendTask(Runnable task){
+    public void sendTask(Callable<Void> task){
 
         ((ConcreteActorSystem)absSystem).add(task);
     }
