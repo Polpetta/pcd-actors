@@ -67,14 +67,12 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     private void stop(AbsActor actorToStop) {
 
-        if (actorToStop == null)
-            System.err.print("Actor to stop is null");
 
         //are this actions executed atomically?
         actorToStop.clearMessages();
         actorToStop.stop(); //stop will put a message automatically in the MailBox
 
-        //I have to wait the thread here?
+        //I have to wait the thread here? YES
     }
 
     public void finalize() throws Throwable{
