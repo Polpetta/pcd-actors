@@ -84,11 +84,13 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         public Object call() throws Exception {
             while (status == internalStatus.running ){
 
-                Packet<T> toProcess = mailbox.pop();
-                if (status == internalStatus.running ){
+                synchronized (this) {
+                    Packet<T> toProcess = mailbox.pop();
+                    if (status == internalStatus.running) {
 
-                    setSender((ActorRef<T>)toProcess.getActorRef());
-                    receive(toProcess.getMessage());
+                        setSender((ActorRef<T>) toProcess.getActorRef());
+                        receive(toProcess.getMessage());
+                    }
                 }
             }
 
@@ -139,7 +141,11 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
     public void stop(){
 
-        status = internalStatus.stopped;
+        synchronized (this) {
+
+            putInMailbox(new Packet(new DummyMessage(), null));
+            status = internalStatus.stopped;
+        }
     }
 
     public void clearMessages(){
@@ -147,17 +153,27 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         mailbox.clear();
     }
 
+    public Callable<Void> getTask(){
+
+        return ActorEmployer;
+    }
+
     public void putInMailbox(Packet newPacket){
 
-        synchronized (this){
+        synchronized (this) {
 
             if (status == internalStatus.initialized) {
 
                 start();
                 status = internalStatus.running;
             }
+
+
+            //this need to be syncronize??
+            if (status == internalStatus.running) {
+                mailbox.put(newPacket);
+            }
         }
-        mailbox.put(newPacket);
     }
 
     private void start(){
@@ -165,5 +181,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         //use callable, but what have I to return?
         ((ImprovedActorRef<T>)self).sendTask(ActorEmployer);
     }
+
+    private class DummyMessage implements Message{}
 
 }
