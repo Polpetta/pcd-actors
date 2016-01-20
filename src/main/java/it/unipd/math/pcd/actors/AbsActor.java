@@ -37,6 +37,8 @@
  */
 package it.unipd.math.pcd.actors;
 
+import java.util.concurrent.Callable;
+
 /**
  * Defines common properties of all actors.
  *
@@ -72,6 +74,27 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
      * flag that inform me about the internal status of my actor
      */
     private internalStatus status;
+
+
+    /**
+     * Task that pop message from the Mailbox and send to a concrete actor
+     */
+    private final Callable<Void> ActorEmployer = new Callable() {
+        @Override
+        public Object call() throws Exception {
+            while (status == internalStatus.running ){
+
+                Packet<T> toProcess = mailbox.pop();
+                if (status == internalStatus.running ){
+
+                    setSender((ActorRef<T>)toProcess.getActorRef());
+                    receive(toProcess.getMessage());
+                }
+            }
+
+            return null; //here is better return a "new Void()"?
+        }
+    };
 
     public AbsActor() {
 
@@ -140,20 +163,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
     private void start(){
 
         //use callable, but what have I to return?
-        ((ImprovedActorRef<T>)self).sendTask(new Runnable() {
-            @Override
-            public void run() {
-                while (status == internalStatus.running ){
-
-                    Packet<T> toProcess = mailbox.pop();
-                    if (status == internalStatus.running ){
-
-                        setSender((ActorRef<T>)toProcess.getActorRef());
-                        receive(toProcess.getMessage());
-                    }
-                }
-            }
-        });
+        ((ImprovedActorRef<T>)self).sendTask(ActorEmployer);
     }
 
 }
