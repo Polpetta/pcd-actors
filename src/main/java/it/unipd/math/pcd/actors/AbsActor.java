@@ -75,28 +75,10 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
      */
     private internalStatus status;
 
-
     /**
      * Task that pop message from the Mailbox and send to a concrete actor
      */
-    private final Callable<Void> ActorEmployer = new Callable() {
-        @Override
-        public Object call() throws Exception {
-            while (status == internalStatus.running ){
-
-                synchronized (this) {
-                    Packet<T> toProcess = mailbox.pop();
-                    if (status == internalStatus.running) {
-
-                        setSender((ActorRef<T>) toProcess.getActorRef());
-                        receive(toProcess.getMessage());
-                    }
-                }
-            }
-
-            return null; //here is better return a "new Void()"?
-        }
-    };
+    private final Callable<Void> ActorEmployer;
 
     public AbsActor() {
 
@@ -106,6 +88,25 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         self = null;
         sender = null;
         status = internalStatus.initialized;
+
+        ActorEmployer = new Callable() {
+            @Override
+            public Object call() throws Exception {
+                while ( status == internalStatus.running ){
+
+                    synchronized (this) {
+                        Packet<T> toProcess = mailbox.pop();
+                        if ( status == internalStatus.running) {
+
+                            setSender((ActorRef<T>) toProcess.getActorRef());
+                            receive(toProcess.getMessage());
+                        }
+                    }
+                }
+
+                return null; //here is better return a "new Void()"?
+            }
+        };
 
     }
 
@@ -137,18 +138,13 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         }
     }
 
-    public Callable<Void> getTask(){
-
-        return ActorEmployer;
-    }
-
     public void putInMailbox(Packet newPacket){
 
         synchronized (this) {
 
             if (status == internalStatus.initialized) {
 
-                start();
+                ((ImprovedActorRef<T>)self).sendTask(ActorEmployer);
                 status = internalStatus.running;
             }
 
@@ -158,12 +154,6 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
                 mailbox.put(newPacket);
             }
         }
-    }
-
-    private void start(){
-
-        //use callable, but what have I to return?
-        ((ImprovedActorRef<T>)self).sendTask(ActorEmployer);
     }
 
     private class DummyMessage implements Message{}
