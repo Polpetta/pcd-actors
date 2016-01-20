@@ -1,5 +1,6 @@
 package it.unipd.math.pcd.actors;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,7 +18,7 @@ public class ConcreteActorSystem extends AbsActorSystem {
         threadManager = Executors.newFixedThreadPool(aviableProcessors);
     }
 
-    public void add(Runnable task){
+    public void add(Callable<Void> task){
 
         //MEMO: see http://stackoverflow.com/questions/3929342/choose-between-executorservices-submit-and-executorservices-execute
         threadManager.submit(task);
