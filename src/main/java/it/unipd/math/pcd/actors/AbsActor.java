@@ -127,30 +127,14 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         return this;
     }
 
-
-    //getter
-    protected final ActorRef<T> getSelf() {
-
-        return self;
-    }
-
-    protected final ActorRef<T> getSender() {
-
-        return sender;
-    }
-
     public void stop(){
 
         synchronized (this) {
 
-            putInMailbox(new Packet(new DummyMessage(), null));
-            status = internalStatus.stopped;
+            mailbox.clear(); //no more messages will be processed
+            putInMailbox(new Packet(new DummyMessage(), null)); //put a dummmy message on mailbox
+            status = internalStatus.stopped; //set task to be stop and don't accept new messages anymore
         }
-    }
-
-    public void clearMessages(){
-
-        mailbox.clear();
     }
 
     public Callable<Void> getTask(){
@@ -169,7 +153,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
             }
 
 
-            //this need to be syncronize??
+            //this need to be synchronize??
             if (status == internalStatus.running) {
                 mailbox.put(newPacket);
             }
