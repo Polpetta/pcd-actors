@@ -16,7 +16,7 @@ public abstract class ImprovedActorRef<T extends Message> implements ActorRef<T>
 
     public void sendTask(Callable<Void> task){
 
-        ((ConcreteActorSystem)absSystem).add(task);
+        ((ConcreteActorSystem)absSystem).add(task, this);
     }
 
     @Override
