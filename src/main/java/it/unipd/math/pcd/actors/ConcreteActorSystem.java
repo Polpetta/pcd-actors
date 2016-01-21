@@ -3,9 +3,7 @@ package it.unipd.math.pcd.actors;
 import it.unipd.math.pcd.actors.exceptions.NoSuchActorException;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Created by davide on 12/01/16.
@@ -13,6 +11,7 @@ import java.util.concurrent.Executors;
 public class ConcreteActorSystem extends AbsActorSystem {
 
     private ExecutorService threadManager;
+    private Map<ActorRef<?>, Future<?>> terminatorManager;
 
 
     public ConcreteActorSystem() {
@@ -20,12 +19,14 @@ public class ConcreteActorSystem extends AbsActorSystem {
         int aviableProcessors = Runtime.getRuntime().availableProcessors();
 
         threadManager = Executors.newFixedThreadPool(aviableProcessors);
+        terminatorManager = new ConcurrentHashMap<>();
     }
 
-    public void add(Callable<Void> task){
+    public void add(Callable<Void> task, ActorRef<?> associateActorRef){
 
         //MEMO: see http://stackoverflow.com/questions/3929342/choose-between-executorservices-submit-and-executorservices-execute
-        threadManager.submit(task);
+        Future<?> future = threadManager.submit(task);
+        terminatorManager.put(associateActorRef, future);
     }
 
 
@@ -45,6 +46,7 @@ public class ConcreteActorSystem extends AbsActorSystem {
     public void stop(ActorRef toStop){
 
         AbsActor toRemove = (AbsActor) getMap().remove(toStop);
+        Future<?> toWait = terminatorManager.remove(toStop);
 
         if (toRemove == null){
 
@@ -52,7 +54,7 @@ public class ConcreteActorSystem extends AbsActorSystem {
         }
 
         stop(toRemove);
-
+        //the future will wait for a result here!
     }
 
     @Override
