@@ -12,7 +12,8 @@ import java.util.concurrent.Executors;
  */
 public class ConcreteActorSystem extends AbsActorSystem {
 
-    ExecutorService threadManager;
+    private ExecutorService threadManager;
+
 
     public ConcreteActorSystem() {
 
