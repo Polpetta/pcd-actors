@@ -125,10 +125,5 @@ public class ActorSystemTest {
         }
 
         system.stop();
-
-
-
-        //attendo 5 secondi?
-        //ORA?
     }
 }
