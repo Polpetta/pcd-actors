@@ -16,9 +16,10 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     public ConcreteActorSystem() {
 
-        int aviableProcessors = Runtime.getRuntime().availableProcessors();
+        //int aviableProcessors = Runtime.getRuntime().availableProcessors();
+        //threadManager = Executors.newFixedThreadPool(aviableProcessors); // deadlock?
 
-        threadManager = Executors.newFixedThreadPool(aviableProcessors);
+        threadManager = Executors.newCachedThreadPool();
         terminatorManager = new ConcurrentHashMap<>();
     }
 
@@ -26,6 +27,7 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
         //MEMO: see http://stackoverflow.com/questions/3929342/choose-between-executorservices-submit-and-executorservices-execute
         Future<?> future = threadManager.submit(task);
+        System.out.println("Future aggiunto, il suo valore è: " + future);
         terminatorManager.put(associateActorRef, future);
     }
 
@@ -48,39 +50,49 @@ public class ConcreteActorSystem extends AbsActorSystem {
         AbsActor toRemove = (AbsActor) getMap().remove(toStop);
         Future<?> toWait = terminatorManager.remove(toStop);
 
-        if (toRemove == null){
+        if (toRemove == null || toWait == null){
 
             throw new NoSuchActorException();
         }
 
-        stop(toRemove);
+        stopAndWait(toRemove, toWait);
         //the future will wait for a result here!
     }
 
     @Override
     public void stop(){
 
+        System.out.println("Size mappa totale: "+ getMap().size());
+        System.out.println("Size mappa future: "+ terminatorManager.size());
+
         for (Map.Entry<ActorRef<?>, Actor<?>> toStop : getMap().entrySet()) {
 
             getMap().remove(toStop);
-            stop(((AbsActor)toStop.getValue()));
+            Future<?> toWait = terminatorManager.remove(toStop.getKey());
+
+            stopAndWait((AbsActor)toStop.getValue(), toWait);
 
         }
     }
 
-    private void stop(AbsActor actorToStop) {
+    private void stopAndWait(AbsActor actorToStop, Future<?> toWait) {
 
 
         //are this actions executed atomically?
-        //actorToStop.clearMessages();
         actorToStop.stop(); //stop will put a message automatically in the MailBox
 
-        //I have to wait the thread here? YES
+            try {
+
+                toWait.get(); // Waiting the thread...
+            } catch (InterruptedException | ExecutionException e) {
+
+                e.printStackTrace();
+            }
     }
 
-    public void finalize() throws Throwable{
+    /*public void finalize() throws Throwable{
 
         stop();
         super.finalize();
-    }
+    }*/
 }
