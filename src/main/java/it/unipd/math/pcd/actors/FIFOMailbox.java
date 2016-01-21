@@ -30,7 +30,7 @@ public class FIFOMailbox implements Mailbox {
    * @return Packet or Null if the queue is empty
    */
   @Override
-  public synchronized Packet pop(){
+  public Packet pop(){
 
     //using synchronize here because queue methods are now thread safe between their
     /*
@@ -55,7 +55,7 @@ public class FIFOMailbox implements Mailbox {
    * @param newPacket
    */
   @Override
-  public synchronized void put(Packet newPacket){
+  public void put(Packet newPacket){
 
     try {
 
@@ -72,7 +72,7 @@ public class FIFOMailbox implements Mailbox {
    * Clear the queue
    */
   @Override
-  public synchronized void clear(){
+  public void clear(){
 
     //clear is a synchronize method
     queue.clear();
