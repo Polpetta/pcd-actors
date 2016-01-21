@@ -16,10 +16,9 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     public ConcreteActorSystem() {
 
-        //int aviableProcessors = Runtime.getRuntime().availableProcessors();
-        //threadManager = Executors.newFixedThreadPool(aviableProcessors); // deadlock?
+        int aviableProcessors = Runtime.getRuntime().availableProcessors();
+        threadManager = Executors.newFixedThreadPool(aviableProcessors); // deadlock?
 
-        threadManager = Executors.newCachedThreadPool();
         terminatorManager = new ConcurrentHashMap<>();
     }
 
@@ -56,14 +55,10 @@ public class ConcreteActorSystem extends AbsActorSystem {
         }
 
         stopAndWait(toRemove, toWait);
-        //the future will wait for a result here!
     }
 
     @Override
     public void stop(){
-
-        System.out.println("Size mappa totale: "+ getMap().size());
-        System.out.println("Size mappa future: "+ terminatorManager.size());
 
         for (Map.Entry<ActorRef<?>, Actor<?>> toStop : getMap().entrySet()) {
 
@@ -90,9 +85,9 @@ public class ConcreteActorSystem extends AbsActorSystem {
             }
     }
 
-    /*public void finalize() throws Throwable{
+    public void finalize() throws Throwable{
 
         stop();
         super.finalize();
-    }*/
+    }
 }
