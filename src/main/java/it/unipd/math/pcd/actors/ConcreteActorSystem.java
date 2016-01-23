@@ -16,9 +16,10 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     public ConcreteActorSystem() {
 
-        int aviableProcessors = Runtime.getRuntime().availableProcessors();
-        threadManager = Executors.newFixedThreadPool(aviableProcessors); // deadlock?
+        //int aviableProcessors = Runtime.getRuntime().availableProcessors();
+        //threadManager = Executors.newFixedThreadPool(aviableProcessors); // deadlock?
 
+        threadManager = Executors.newCachedThreadPool();
         terminatorManager = new ConcurrentHashMap<>();
     }
 
@@ -26,7 +27,6 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
         //MEMO: see http://stackoverflow.com/questions/3929342/choose-between-executorservices-submit-and-executorservices-execute
         Future<?> future = threadManager.submit(task);
-        System.out.println("Future aggiunto, il suo valore è: " + future);
         terminatorManager.put(associateActorRef, future);
     }
 
