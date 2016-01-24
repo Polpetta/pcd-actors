@@ -37,7 +37,10 @@
  */
 package it.unipd.math.pcd.actors;
 
+import it.unipd.math.pcd.actors.utils.ActorSpam;
 import it.unipd.math.pcd.actors.utils.ActorSystemFactory;
+import it.unipd.math.pcd.actors.utils.Counter;
+import it.unipd.math.pcd.actors.utils.MessageCounter;
 import it.unipd.math.pcd.actors.utils.actors.TrivialActor;
 import it.unipd.math.pcd.actors.utils.actors.counter.CounterActor;
 import it.unipd.math.pcd.actors.utils.actors.ping.pong.PingPongActor;
@@ -45,9 +48,12 @@ import it.unipd.math.pcd.actors.utils.actors.StoreActor;
 import it.unipd.math.pcd.actors.utils.messages.StoreMessage;
 import it.unipd.math.pcd.actors.utils.messages.counter.Increment;
 import it.unipd.math.pcd.actors.utils.messages.ping.pong.PingMessage;
+import it.unipd.math.pcd.actors.utils.messages.spam.ImplDebugMessage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Random;
 
 /**
  * Integration test suite on actor features.
@@ -110,5 +116,32 @@ public class ActorIT {
 
         Assert.assertEquals("A counter that was incremented 1000 times should be equal to 1000",
                 200, ((CounterActor) counter.getUnderlyingActor(system)).getCounter());
+    }
+
+    ////////////////////mine
+    @Test
+    public void shouldNotExplode(){
+
+        final int ACTOR_NUM = 200;
+        final long MESSAGE_NUM = 10000;
+
+        Random entropy = new Random();
+        MessageCounter messageCounter = new MessageCounter(MESSAGE_NUM, system);
+        Counter counter = messageCounter.getCounter();
+        ActorSpam actorSpam = new ActorSpam(ACTOR_NUM, system);
+
+        while (counter.canSendMessage()){
+
+            int random1 = entropy.nextInt(ACTOR_NUM);
+            int random2 = entropy.nextInt(ACTOR_NUM);
+
+            ActorRef actor1 = (FinalActorRef)actorSpam.getActor(random1);
+            ActorRef actor2 = (FinalActorRef)actorSpam.getActor(random2);
+
+            actor1.send(new ImplDebugMessage(random1), actor2);
+        }
+
+        System.out.println("CALLING STOP");
+        system.stop();
     }
 }
