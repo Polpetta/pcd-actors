@@ -22,7 +22,6 @@ public abstract class ImprovedActorRef<T extends Message> implements ActorRef<T>
     @Override
     public int compareTo( ActorRef toCompare ) {
 
-        //this control only if "this" ref == anotherEmployer ref. Am I sure this is ok?
         if (this == toCompare){
 
             return 0;

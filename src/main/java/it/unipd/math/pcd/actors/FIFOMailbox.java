@@ -9,9 +9,6 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class FIFOMailbox implements Mailbox {
 
-  /*
-  poll and put are synchronized methods, but there aren't between them
-   */
 
   /**
    *
@@ -32,20 +29,13 @@ public class FIFOMailbox implements Mailbox {
   @Override
   public Packet pop(){
 
-    //using synchronize here because queue methods are now thread safe between their
-    /*
-
-    Here is better poll o take? take() wait until there is a element in the
-    queue. poll() return null if no elements are in the queue
-     */
-    try {//I'm sure i need a try 'n catch here? Can I throw the exception?
+    try {
       return queue.take();
     }catch(InterruptedException e){
 
       e.printStackTrace();
     }
 
-    //TODO: Check if this is ok
     return null;
   }
 
@@ -59,7 +49,6 @@ public class FIFOMailbox implements Mailbox {
 
     try {
 
-      //put is a synchronize method
       queue.put(newPacket);
     }catch (InterruptedException e){
 
@@ -74,7 +63,6 @@ public class FIFOMailbox implements Mailbox {
   @Override
   public void clear(){
 
-    //clear is a synchronize method
     queue.clear();
   }
 
@@ -85,7 +73,6 @@ public class FIFOMailbox implements Mailbox {
   @Override
   public int size(){
 
-    //size is a synchronize method
     return queue.size();
   }
 

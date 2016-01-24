@@ -22,7 +22,6 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     public void add(Callable<Void> task, ActorRef<?> associateActorRef){
 
-        //MEMO: see http://stackoverflow.com/questions/3929342/choose-between-executorservices-submit-and-executorservices-execute
         Future<?> future = threadManager.submit(task);
         terminatorManager.put(associateActorRef, future);
     }
@@ -69,24 +68,17 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     private void stopAndWait(AbsActor actorToStop, Future<?> toWait) {
 
-
-        //are this actions executed atomically?
         actorToStop.stop(); //stop will put a message automatically in the MailBox
 
-        //System.out.println(toWait);
+        try {
 
-            try {
-
-                if (toWait != null && toWait.isDone() == false){
-                    //System.out.println("Now I'm waiting");
-                    toWait.get(); // Waiting the thread...
-                }
-            } catch (InterruptedException | ExecutionException e) {
+            if (toWait != null && toWait.isDone() == false){
+                toWait.get(); // Waiting the thread...
+            }
+        } catch (InterruptedException | ExecutionException e) {
 
                 e.printStackTrace();
-            }
-
-        //System.out.println("Finish waiting");
+        }
     }
 
     public void finalize() throws Throwable{

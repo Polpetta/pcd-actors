@@ -98,9 +98,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
             public Object call() throws Exception {
                 while ( status == internalStatus.running ){
 
-                    //System.out.println("popping a message...mailbox size: " + mailbox.size());
                     Packet<T> toProcess = mailbox.pop();
-                    //System.out.println("popped a " + toProcess.getMessage().toString());
 
                     synchronized (lock) {
                         if ( status == internalStatus.running ) {
@@ -110,9 +108,6 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
                         }
                     }
                 }
-
-                //System.out.println("Bye");
-                //System.out.println("%%%%%%%%%");
 
                 return null;
             }
@@ -142,13 +137,8 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
         synchronized (lock) {
 
-
-            //System.out.println("%%%%%%%%%%%%");
-            //System.out.println("Stop called");
             mailbox.clear(); //no more messages will be processed
             status = internalStatus.stopped; //set task to be stop and don't accept new messages anymore
-            //putInMailbox(new Packet(new DummyMessage(), null)); //put a dummy message on mailbox
-            //System.out.println("Putting a message dummy message");
             mailbox.put(new Packet(new DummyMessage(), null));
 
         }
@@ -165,9 +155,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
             }
 
 
-            //this need to be synchronize??
             if (status == internalStatus.running) {
-                //System.out.println("Putting a message: " + newPacket.getMessage().toString());
                 mailbox.put(newPacket);
             }
         }
