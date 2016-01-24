@@ -16,9 +16,6 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     public ConcreteActorSystem() {
 
-        //int aviableProcessors = Runtime.getRuntime().availableProcessors();
-        //threadManager = Executors.newFixedThreadPool(aviableProcessors); // deadlock?
-
         threadManager = Executors.newCachedThreadPool();
         terminatorManager = new ConcurrentHashMap<>();
     }
@@ -76,17 +73,25 @@ public class ConcreteActorSystem extends AbsActorSystem {
         //are this actions executed atomically?
         actorToStop.stop(); //stop will put a message automatically in the MailBox
 
+        //System.out.println(toWait);
+
             try {
 
-                toWait.get(); // Waiting the thread...
+                if (toWait != null && toWait.isDone() == false){
+                    //System.out.println("Now I'm waiting");
+                    toWait.get(); // Waiting the thread...
+                }
             } catch (InterruptedException | ExecutionException e) {
 
                 e.printStackTrace();
             }
+
+        //System.out.println("Finish waiting");
     }
 
     public void finalize() throws Throwable{
 
+        threadManager.shutdown();
         stop();
         super.finalize();
     }
