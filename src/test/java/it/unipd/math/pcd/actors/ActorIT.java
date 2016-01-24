@@ -122,10 +122,16 @@ public class ActorIT {
     @Test
     public void shouldNotExplode(){
 
-        final int ACTOR_NUM = 200;
-        final long MESSAGE_NUM = 10000;
-
         Random entropy = new Random();
+        //final int ACTOR_NUM = 200;
+        //final long MESSAGE_NUM = 10000;
+
+        final int ACTOR_NUM = entropy.nextInt(500);
+        final long MESSAGE_NUM = entropy.nextInt(15000);
+
+        System.out.println("Starting with " + ACTOR_NUM + " actors and " + MESSAGE_NUM + " messages");
+
+
         MessageCounter messageCounter = new MessageCounter(MESSAGE_NUM, system);
         Counter counter = messageCounter.getCounter();
         ActorSpam actorSpam = new ActorSpam(ACTOR_NUM, system);
