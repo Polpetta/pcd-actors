@@ -75,7 +75,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
     /**
      * flag that inform me about the internal status of my actor
      */
-    private internalStatus status;
+    private volatile internalStatus status;
 
     /**
      * Task that pop message from the Mailbox and send to a concrete actor
