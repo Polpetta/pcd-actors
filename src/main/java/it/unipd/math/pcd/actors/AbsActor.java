@@ -48,6 +48,8 @@ import java.util.concurrent.Callable;
  */
 public abstract class AbsActor<T extends Message> implements Actor<T> {
 
+    private Object lock;
+
     private enum internalStatus{
 
         initialized,
@@ -82,6 +84,8 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
     public AbsActor() {
 
+        lock = new Object();
+
         mailbox = new FIFOMailbox();
 
         //default null
@@ -94,9 +98,12 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
             public Object call() throws Exception {
                 while ( status == internalStatus.running ){
 
-                    synchronized (this) {
-                        Packet<T> toProcess = mailbox.pop();
-                        if ( status == internalStatus.running) {
+                    //System.out.println("popping a message...mailbox size: " + mailbox.size());
+                    Packet<T> toProcess = mailbox.pop();
+                    //System.out.println("popped a " + toProcess.getMessage().toString());
+
+                    synchronized (lock) {
+                        if ( status == internalStatus.running ) {
 
                             setSender((ActorRef<T>) toProcess.getActorRef());
                             receive(toProcess.getMessage());
@@ -104,7 +111,10 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
                     }
                 }
 
-                return null; //here is better return a "new Void()"?
+                //System.out.println("Bye");
+                //System.out.println("%%%%%%%%%");
+
+                return null;
             }
         };
 
@@ -130,17 +140,23 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
     public void stop(){
 
-        synchronized (this) {
+        synchronized (lock) {
 
+
+            //System.out.println("%%%%%%%%%%%%");
+            //System.out.println("Stop called");
             mailbox.clear(); //no more messages will be processed
-            putInMailbox(new Packet(new DummyMessage(), null)); //put a dummmy message on mailbox
             status = internalStatus.stopped; //set task to be stop and don't accept new messages anymore
+            //putInMailbox(new Packet(new DummyMessage(), null)); //put a dummy message on mailbox
+            //System.out.println("Putting a message dummy message");
+            mailbox.put(new Packet(new DummyMessage(), null));
+
         }
     }
 
     public void putInMailbox(Packet newPacket){
 
-        synchronized (this) {
+        synchronized (lock) {
 
             if (status == internalStatus.initialized) {
 
@@ -151,6 +167,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
             //this need to be synchronize??
             if (status == internalStatus.running) {
+                //System.out.println("Putting a message: " + newPacket.getMessage().toString());
                 mailbox.put(newPacket);
             }
         }
