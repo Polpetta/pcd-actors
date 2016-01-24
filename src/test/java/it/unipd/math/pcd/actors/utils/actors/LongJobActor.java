@@ -9,7 +9,7 @@ import it.unipd.math.pcd.actors.utils.messages.DummyMessage;
  */
 public class LongJobActor<T extends Message> extends AbsActor<T> {
 
-    private final long TIME_TO_SLEEP = 10000;
+    private final long TIME_TO_SLEEP = 5000;
 
     public LongJobActor(){
 

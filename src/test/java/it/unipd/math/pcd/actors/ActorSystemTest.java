@@ -111,7 +111,7 @@ public class ActorSystemTest {
     @Test
     public void shouldWaitAllThreadFinish() {
 
-        final long TIME_TO_SLEEP = 5000;
+        final long TIME_TO_SLEEP = 3000;
 
         ActorRef ref1 = system.actorOf(LongJobActor.class);
 
