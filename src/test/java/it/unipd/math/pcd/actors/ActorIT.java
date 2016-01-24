@@ -126,8 +126,9 @@ public class ActorIT {
         //final int ACTOR_NUM = 200;
         //final long MESSAGE_NUM = 10000;
 
-        final int ACTOR_NUM = entropy.nextInt(500);
-        final long MESSAGE_NUM = entropy.nextInt(15000);
+        final int ACTOR_NUM = entropy.nextInt(1000);
+        final long MESSAGE_NUM = entropy.nextInt(30000);
+        final int MAIN_THREAD_SLEEP = entropy.nextInt(15000);
 
         System.out.println("Starting with " + ACTOR_NUM + " actors and " + MESSAGE_NUM + " messages");
 
@@ -145,6 +146,13 @@ public class ActorIT {
             ActorRef actor2 = (FinalActorRef)actorSpam.getActor(random2);
 
             actor1.send(new ImplDebugMessage(random1), actor2);
+        }
+
+        try {
+            Thread.sleep(MAIN_THREAD_SLEEP);
+        } catch (InterruptedException e){
+
+            e.printStackTrace();
         }
 
         System.out.println("CALLING STOP");
