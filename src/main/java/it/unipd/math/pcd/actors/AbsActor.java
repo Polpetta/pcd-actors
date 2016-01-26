@@ -48,7 +48,7 @@ import java.util.concurrent.Callable;
  */
 public abstract class AbsActor<T extends Message> implements Actor<T> {
 
-    private Object lock;
+    private final Object lock;
 
     private enum internalStatus{
 
@@ -70,7 +70,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
     /**
      * mailbox where messages will be send
      */
-    protected Mailbox mailbox;
+    private final Mailbox mailbox;
 
     /**
      * flag that inform me about the internal status of my actor
@@ -137,7 +137,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         return this;
     }
 
-    public void stop(){
+    public final void stop(){
 
         synchronized (lock) {
 
@@ -147,7 +147,7 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         }
     }
 
-    public void putInMailbox(Packet newPacket){
+    public final void putInMailbox(Packet newPacket){
 
         synchronized (lock) {
 
