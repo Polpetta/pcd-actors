@@ -96,15 +96,19 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
         ActorEmployer = new Callable() {
             @Override
             public Object call() throws Exception {
-                while ( status == internalStatus.running ){
+                boolean run = true;
+
+                while ( run ){
 
                     Packet<T> toProcess = mailbox.pop();
 
                     synchronized (lock) {
-                        if ( status == internalStatus.running ) {
+                        if ( toProcess.isAStoppingPacket() == false ) {
 
                             setSender((ActorRef<T>) toProcess.getActorRef());
                             receive(toProcess.getMessage());
+                        } else {
+                            run = false;
                         }
                     }
                 }
@@ -137,9 +141,8 @@ public abstract class AbsActor<T extends Message> implements Actor<T> {
 
         synchronized (lock) {
 
-            mailbox.clear(); //no more messages will be processed
             status = internalStatus.stopped; //set task to be stop and don't accept new messages anymore
-            mailbox.put(new Packet(new DummyMessage(), null));
+            mailbox.put(new Packet(new DummyMessage(), null, true)); //this is the last package in the mailbox
 
         }
     }

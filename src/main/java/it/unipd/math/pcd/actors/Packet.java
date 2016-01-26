@@ -7,13 +7,21 @@ package it.unipd.math.pcd.actors;
  */
 public class Packet<T extends Message> {
 
-  T msg;
-  ActorRef<? extends Message> sender;
+  private T msg;
+  private ActorRef<? extends Message> sender;
+  private boolean isAStoppingPacket;
 
   public Packet(T msg, ActorRef<? extends Message> sender){
 
     this.msg = msg;
     this.sender = sender;
+    isAStoppingPacket = false;
+  }
+
+  public Packet(T msg, ActorRef<? extends Message> sender, boolean isAStoppingPacket){
+
+    this(msg, sender);
+    this.isAStoppingPacket = isAStoppingPacket;
   }
 
 
@@ -38,5 +46,10 @@ public class Packet<T extends Message> {
   public void setMessage(T newMessage){
 
     msg = newMessage;
+  }
+
+  public boolean isAStoppingPacket(){
+
+    return isAStoppingPacket;
   }
 }
