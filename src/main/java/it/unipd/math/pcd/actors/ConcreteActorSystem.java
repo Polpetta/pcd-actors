@@ -68,7 +68,7 @@ public class ConcreteActorSystem extends AbsActorSystem {
 
     private void stopAndWait(AbsActor actorToStop, Future<?> toWait) {
 
-        actorToStop.stop(); //stop will put a message automatically in the MailBox
+        actorToStop.stop();
 
         try {
 
