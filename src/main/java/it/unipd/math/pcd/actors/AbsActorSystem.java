@@ -102,7 +102,7 @@ public abstract class AbsActorSystem implements ActorSystem {
         return founded;
     }
 
-    protected Map<ActorRef<?>, Actor<?>> getMap(){
+    Map<ActorRef<?>, Actor<?>> getMap(){ //package visibility
 
         return actors;
     }
