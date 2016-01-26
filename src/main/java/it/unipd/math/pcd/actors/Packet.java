@@ -18,7 +18,7 @@ public class Packet<T extends Message> {
     isAStoppingPacket = false;
   }
 
-  public Packet(T msg, ActorRef<? extends Message> sender, boolean isAStoppingPacket){
+  Packet(T msg, ActorRef<? extends Message> sender, boolean isAStoppingPacket){ //only for members in the same package
 
     this(msg, sender);
     this.isAStoppingPacket = isAStoppingPacket;
