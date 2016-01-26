@@ -7,8 +7,8 @@ package it.unipd.math.pcd.actors;
  */
 public interface Mailbox {
 
-  Packet pop();
-  void put(Packet newPacket);
-  void clear();
-  int size();
+  public Packet pop();
+  public void put(Packet newPacket);
+  public void clear();
+  public int size();
 }
