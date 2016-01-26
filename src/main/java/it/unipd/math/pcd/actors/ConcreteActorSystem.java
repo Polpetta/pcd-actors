@@ -10,8 +10,8 @@ import java.util.concurrent.*;
  */
 public class ConcreteActorSystem extends AbsActorSystem {
 
-    private ExecutorService threadManager;
-    private Map<ActorRef<?>, Future<?>> terminatorManager;
+    private final ExecutorService threadManager;
+    private final Map<ActorRef<?>, Future<?>> terminatorManager;
 
 
     public ConcreteActorSystem() {

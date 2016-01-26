@@ -14,7 +14,7 @@ public class FIFOMailbox implements Mailbox {
    *
    * Synchronized Queue
    */
-  private LinkedBlockingQueue<Packet> queue;
+  private final LinkedBlockingQueue<Packet> queue;
 
   public FIFOMailbox(){
 

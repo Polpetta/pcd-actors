@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
  */
 public abstract class ImprovedActorRef<T extends Message> implements ActorRef<T> {
 
-    protected AbsActorSystem absSystem;
+    protected final AbsActorSystem absSystem;
 
     public ImprovedActorRef( AbsActorSystem newSystem ){
 
