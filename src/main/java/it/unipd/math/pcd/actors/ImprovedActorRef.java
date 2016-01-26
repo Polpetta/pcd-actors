@@ -14,7 +14,7 @@ public abstract class ImprovedActorRef<T extends Message> implements ActorRef<T>
         absSystem = newSystem;
     }
 
-    public void sendTask(Callable<Void> task){
+    void sendTask(Callable<Void> task){ //package visibility
 
         ((ConcreteActorSystem)absSystem).add(task, this);
     }

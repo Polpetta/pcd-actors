@@ -20,7 +20,7 @@ public class ConcreteActorSystem extends AbsActorSystem {
         terminatorManager = new ConcurrentHashMap<>();
     }
 
-    public void add(Callable<Void> task, ActorRef<?> associateActorRef){
+    void add(Callable<Void> task, ActorRef<?> associateActorRef){ //package visibility
 
         Future<?> future = threadManager.submit(task);
         terminatorManager.put(associateActorRef, future);
